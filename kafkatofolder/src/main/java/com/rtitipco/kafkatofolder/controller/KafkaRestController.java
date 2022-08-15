@@ -20,7 +20,8 @@ public class KafkaRestController {
     @PostMapping("/pushtokafka")
     public  void PostMessage(@RequestBody String strMsg)
     {
-        Processor.PostMessageToKafka(strMsg);
+       // Processor.PostMessageToKafka(strMsg);
+        System.out.println("Bala");
 
     }
 

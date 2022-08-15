@@ -3,7 +3,7 @@ package com.rtitipco.kafkatofolder.processor;
 //import com.tesco.rtstipcoreplacement.FolderToKafka;
 
 import com.rtitipco.kafkatofolder.kafkaconfig.KafkaProperties;
-import org.apache.kafka.clients.producer.KafkaProducer;
+//import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +20,8 @@ public class Kafkaprocessor {
     @Autowired
     KafkaProperties properties;
 
-    @Autowired
-    private KafkaProducer<String, String> kafkaProducer;
+   // @Autowired
+   // private KafkaProducer<String, String> kafkaProducer;
 
     public void PostMessageToKafka(String strmessage)
     {
@@ -31,7 +31,7 @@ public class Kafkaprocessor {
 
             System.out.println( GetMessage(filename));
             kafkaProducer.send(new ProducerRecord<>("invoices", GetMessage(filename)));*/
-        kafkaProducer.send(new ProducerRecord<>("invoices", strmessage));
+      //  kafkaProducer.send(new ProducerRecord<>("invoices", strmessage));
 
 log.info("completed.........");
 
