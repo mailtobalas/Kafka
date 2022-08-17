@@ -1,38 +1,10 @@
-properties([
-        parameters([
-                string(
-                        defaultValue: '',
-                        description: '''The release version. eg 1.0.0. Artifacts will be released with this version''',
-                        name: 'ReleaseVersion'),
-                string(
-                        defaultValue: '',
-                        description: '''The next development version. eg 1.0.1
-        The version in the pom file will be updated with ${nextDevelopmentVersion}-SNAPSHOT
-        ''',
-                        name: 'NextDevelopmentVersion'),
-                string(
-                        defaultValue: '',
-                        description: 'change cause',
-                        name: 'ChangeCause')
-        ]),
-        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '20', numToKeepStr: '20')),
-        pipelineTriggers([])
-])
-def label = "release-${UUID.randomUUID().toString()}"
-        {
-            node(label) { // node start
-                container('build') {
-                    stage('checkout') {
-                        checkout([
-                                $class                           : 'GitSCM',
-                                branches                         : scm.branches,
-                                doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
-                                extensions                       : [
-                                        [$class: 'CloneOption', noTags: false, shallow: false, depth: 0, reference: '']
-                                ],
-                                userRemoteConfigs                : scm.userRemoteConfigs,
-                        ])
-                    }
-                }
+pipeline {
+    agent any
+    stages {
+        stage('build') {
+            steps {
+                bat 'whoami'
             }
         }
+    }
+}
