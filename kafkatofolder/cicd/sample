@@ -29,6 +29,10 @@ podTemplate(label: label,
 ){
     node(label) { // node start
         container('build') {
+            tools
+                    {
+                        maven "Maven"
+                    }
             stage('checkout') {
                 checkout([
                         $class: 'GitSCM',
