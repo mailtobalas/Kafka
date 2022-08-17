@@ -2,6 +2,10 @@ pipeline {
     agent any
     stages {
         stage('checkout') {
+            tools
+                    {
+                        maven "Maven"
+                    }
             steps {
                 sh 'echo checkout'
                 checkout([$class: 'GitSCM',
