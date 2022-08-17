@@ -4,7 +4,10 @@ pipeline {
         stage('checkout') {
             steps {
                 sh 'echo checkout'
-                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/mailtobalas/Kafka.git']]])
+                checkout([$class: 'GitSCM',
+                          branches: [[name: '*/master']],
+                          extensions: [],
+                          userRemoteConfigs: [[url: 'https://github.com/mailtobalas/Kafka.git']]])
             }
         }
 
