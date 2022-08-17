@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        label 'ubuntuNode1'
-    }
+
     stages {
         stage('pre -build') {
             steps {
