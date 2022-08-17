@@ -1,0 +1,107 @@
+#!/usr/bin/env groovy
+properties([
+        parameters([
+                string(
+                        defaultValue: '',
+                        description: '''The release version. eg 1.0.0. Artifacts will be released with this version''',
+                        name: 'ReleaseVersion'),
+                string(
+                        defaultValue: '',
+                        description: '''The next development version. eg 1.0.1
+        The version in the pom file will be updated with ${nextDevelopmentVersion}-SNAPSHOT
+        ''',
+                        name: 'NextDevelopmentVersion'),
+                string(
+                        defaultValue: '',
+                        description: 'change cause',
+                        name: 'ChangeCause')
+        ]),
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '20', numToKeepStr: '20')),
+        pipelineTriggers([])
+])
+def label = "release-${UUID.randomUUID().toString()}"
+
+podTemplate(label: label,
+        containers: [
+                containerTemplate(name: 'build', image: 'euwppe127cosbuilddeployacr.azurecr.io/custom:cos-build', ttyEnabled: true, alwaysPullImage: true, privileged: true)
+        ],
+        volumes: [hostPathVolume(hostPath: '/root/.m2', mountPath: '/root/.m2')]
+){
+    node(label) { // node start
+        container('build') {
+            stage('checkout') {
+                checkout([
+                        $class: 'GitSCM',
+                        branches: scm.branches,
+                        doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+                        extensions: [
+                                [$class: 'CloneOption', noTags: false, shallow: false, depth: 0, reference: '']
+                        ],
+                        userRemoteConfigs: scm.userRemoteConfigs,
+                ])
+            } // checkout stage ends
+
+
+            stage('dev-login') {
+                withCredentials([azureServicePrincipal('AzureDevSP')]) {
+                    sh 'az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET -t $AZURE_TENANT_ID '
+                    //sh 'az aks get-credentials --resource-group euw-dev-127-cos-app-rg --name euw-dev-127-cos-app-aks --subscription ff0d466c-fe1d-495b-810a-73fb6fa79e04 --admin'
+                }
+            }
+
+            /*stage('dev-test-secrets') {
+                sh(script: "mkdir -p /config")
+
+                withCredentials([
+                        string(credentialsId: 'test-secrets-application-history-query-test', variable: 'applicationhistoryquerytest'),
+                        string(credentialsId: 'test-secrets-application-history-scribe-test', variable: 'applicationhistoryscribetest')
+                ]) {
+                    sh 'echo $applicationhistoryquerytest | base64 --decode > /config/application-history-query-test.yml'
+                    sh 'echo $applicationhistoryscribetest | base64 --decode > /config/application-history-scribe-test.yml'
+                }
+            }*/
+
+            stage('code quality') {
+                // will return command to build all profiles
+                def command = "python3.6 -c 'from cicdazure.falcon import *; gen_build_command(change_set=[])'"
+                def mvn_command = sh(returnStdout: true, script: command)
+                codeQualityCheck("${mvn_command}")
+            } // stage code quality ends
+
+
+            stage('docker build & push') {
+                // build and push docker images (for all profiles)
+                sh(script: "python3.6 -c 'from cicdazure.falcon import *; build_docker(change_set=[], version=\"$params.ReleaseVersion\")'")
+
+            }
+
+            stage('release') {
+                withCredentials([usernamePassword(credentialsId: 'AdminAccount', passwordVariable: 'adminPass', usernameVariable: 'adminUser')]) {
+                    sh "echo https://$adminUser:$adminPass@github.dev.global.tesco.org > ~/.git-credentials"
+                    sh "git config --global credential.helper store --file=~/.git-credentials"
+                    sh "python3.6 -c 'from cicdazure.falcon import *; release(release_version=\"$params.ReleaseVersion\", next_version=\"$params.NextDevelopmentVersion\", branch=\"falcon_dist\", adminUser=\"$adminUser\")'"
+                }
+            } // stage release & deploy ends
+        } // build container ends
+    } // node end
+}
+
+
+// code quality --> mvn clean install
+def codeQualityCheck(def command) {
+    println "the command is $command"
+    sh(script: command)
+    recordIssues enabledForFailure: false, failedTotalAll: '150', failedTotalHigh: '40', failedTotalNormal: '40', failedTotalLow: '20', tool: spotBugs(pattern: '**/spotbugsXml.xml')
+    recordIssues enabledForFailure: false, failedTotalAll: '150', failedTotalHigh: '40', failedTotalNormal: '150', failedTotalLow: '20', tool: pmdParser(pattern: '**/target/pmd.xml')
+    //cucumber '**/target/cucumber/**/*.json'
+    //TODO step([$class: 'AnalysisPublisher', canComputeNew: false, defaultEncoding: '', healthy: '', unHealthy: ''])
+    // junit '**/target/clover/surefire-reports/**/*.xml'
+    /*step([
+            $class: 'CloverPublisher',
+            cloverReportDir: 'target/site',
+            cloverReportFileName: 'clover.xml',
+            healthyTarget: [methodCoverage: 60, conditionalCoverage: 40, statementCoverage: 60], // optional, default is: method=70, conditional=80, statement=80
+            unhealthyTarget: [methodCoverage: 55, conditionalCoverage: 30, statementCoverage: 55], // optional, default is none
+//            failingTarget: [methodCoverage: 50, conditionalCoverage: 20, statementCoverage: 50]     // optional, default is none
+   // ])*/
+}
