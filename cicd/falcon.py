@@ -79,14 +79,7 @@ def tag(image):
     return remote_img
 
 
-def createImages(profiles, version):
-    # profiles = get_profiles(change_set)
-    # TODO: uncomment above, remove below line
-    if version is 'SNAPSHOT' or version is None:
-        cmd = "mvn clean package -P{},docker -Dmaven.test.skip=true".format(",".join(profiles))
-    else:
-        cmd = "mvn clean package -P{},docker -Dmaven.test.skip=true -DimageVersion={}".format(",".join(profiles), version)
-    subprocess.check_call(cmd, shell=True)
+
 
 
 def configure_git(adminUser, branch):
