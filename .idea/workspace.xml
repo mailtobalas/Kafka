@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="61532ab9-3579-4f44-9ec5-4221674c00ef" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/cicd/Jenkinsbuild" beforeDir="false" afterPath="$PROJECT_DIR$/cicd/Jenkinsbuild" afterDir="false" />
-    </list>
+    <list default="true" id="61532ab9-3579-4f44-9ec5-4221674c00ef" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/classes/" />
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
