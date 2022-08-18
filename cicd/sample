@@ -94,15 +94,7 @@ def codeQualityCheck(def command) {
     sh(script: command)
     recordIssues enabledForFailure: false, failedTotalAll: '150', failedTotalHigh: '40', failedTotalNormal: '40', failedTotalLow: '20', tool: spotBugs(pattern: '**/spotbugsXml.xml')
     recordIssues enabledForFailure: false, failedTotalAll: '150', failedTotalHigh: '40', failedTotalNormal: '150', failedTotalLow: '20', tool: pmdParser(pattern: '**/target/pmd.xml')
-    //cucumber '**/target/cucumber/**/*.json'
+
     //TODO step([$class: 'AnalysisPublisher', canComputeNew: false, defaultEncoding: '', healthy: '', unHealthy: ''])
-    // junit '**/target/clover/surefire-reports/**/*.xml'
-    /*step([
-            $class: 'CloverPublisher',
-            cloverReportDir: 'target/site',
-            cloverReportFileName: 'clover.xml',
-            healthyTarget: [methodCoverage: 60, conditionalCoverage: 40, statementCoverage: 60], // optional, default is: method=70, conditional=80, statement=80
-            unhealthyTarget: [methodCoverage: 55, conditionalCoverage: 30, statementCoverage: 55], // optional, default is none
-//            failingTarget: [methodCoverage: 50, conditionalCoverage: 20, statementCoverage: 50]     // optional, default is none
-   // ])*/
+
 }
