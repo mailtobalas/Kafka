@@ -12,13 +12,15 @@ import uuid
 REGISTRY = "euwppe127cosbuilddeployacr.azurecr.io"
 
 PROFILES_LIST = [
-    'kafkatofolder'
+    'kafkatofolder',
+    'kafkatofolders'
 ]
 
 # key --> starts with
 # value --> profile
 tree = {
     "kafkatofolder":"kafkatofolder",
+    "kafkatofolders":"kafkatofolders",
     "pom.xml": "all",
     "jenkins": "all"
 }
