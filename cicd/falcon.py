@@ -6,7 +6,7 @@ import subprocess
 import sys
 import urllib.parse
 import uuid
-import yaml
+
 
 
 REGISTRY = "euwppe127cosbuilddeployacr.azurecr.io"
