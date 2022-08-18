@@ -16,6 +16,9 @@ pipeline {
                 sh "mvn -Dmaven.test.failure.ignore=true clean package"
             }
         }
+        stage('Test') {
+            sh "mvn test"
+        }
 
     }
     post {
