@@ -12,19 +12,13 @@ import yaml
 REGISTRY = "euwppe127cosbuilddeployacr.azurecr.io"
 
 PROFILES_LIST = [
-    'falcon-injector-consumer',
-    'falcon-injector-scribe',
-    'falcon-processor',
-    'falcon-transformer'
+    'kafkatofolder'
 ]
 
 # key --> starts with
 # value --> profile
 tree = {
-    "falcon-injector-consumer":"falcon-injector-consumer",
-    "falcon-injector-scribe": "falcon-injector-scribe",
-    "falcon-processor": "falcon-processor",
-    "falcon-transformer": "falcon-transformer",
+    "kafkatofolder":"kafkatofolder",
     "pom.xml": "all",
     "jenkins": "all"
 }

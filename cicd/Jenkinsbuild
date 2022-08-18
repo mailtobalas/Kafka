@@ -23,8 +23,9 @@ pipeline {
                       script {
                           echo "code quality"
                           sh "python3 --version"
-                         // def command = "python3 -c 'from cicdazure.falcon import *; gen_build_command(change_set=[])'"
-                          //def mvn_command = sh(returnStdout: true, script: command)
+                          def command = "python3 -c 'from cicdazure.falcon import *; gen_build_command(change_set=[])'"
+                          def mvn_command = sh(returnStdout: true, script: command)
+                          echo mvn_command
                           //codeQualityCheck("${mvn_command}")
                       }
                     }
