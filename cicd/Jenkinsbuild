@@ -22,11 +22,10 @@ pipeline {
                     {
                       script {
                           echo "code quality"
-
                           def command = "python3 -c 'from cicd.falcon import *; gen_build_command(change_set=[])'"
                           def mvn_command = sh(returnStdout: true, script: command)
-                          echo mvn_command
-                          //codeQualityCheck("${mvn_command}")
+                          //echo mvn_command
+                          codeQualityCheck("${mvn_command}")
                       }
                     }
         } // stage code quality ends
