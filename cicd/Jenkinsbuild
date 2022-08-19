@@ -51,8 +51,11 @@ pipeline {
                     }
         } // stage code quality ends
         stage('docker build & push') {
-            // build and push docker images (for all profiles)
-            sh(script: "python3.6 -c 'from cicdazure.falcon import *; build_docker(change_set=[], version=1.0.1)'")
+            steps
+                    {
+                        // build and push docker images (for all profiles)
+                        sh(script: "python3.6 -c 'from cicdazure.falcon import *; build_docker(change_set=[], version=1.0.1)'")
+                    }
 
         }
 
