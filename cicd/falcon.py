@@ -55,7 +55,7 @@ def build_docker(change_set=[], version=None):
     #profiles = ['truenorth']
     #createImages(profiles, version)
     # Separate mvn command has been used for profile truenorth to prevent module "duplicated in the reactor" error for cos-scribe-modules
-    profiles = ['falcon-injector-consumer','falcon-injector-scribe','falcon-processor','falcon-transformer']
+    profiles = ['kafkatofolder']
     createImages(profiles, version)
     # get images
     images = subprocess.check_output("docker images", shell=True).decode().split('\n')[1:-1]
@@ -79,6 +79,14 @@ def tag(image):
     return remote_img
 
 
+def createImages(profiles, version):
+    # profiles = get_profiles(change_set)
+    # TODO: uncomment above, remove below line
+    if version is 'SNAPSHOT' or version is None:
+        cmd = "mvn clean package -P{},docker -Dmaven.test.skip=true".format(",".join(profiles))
+    else:
+        cmd = "mvn clean package -P{},docker -Dmaven.test.skip=true -DimageVersion={}".format(",".join(profiles), version)
+    subprocess.check_call(cmd, shell=True)
 
 
 
